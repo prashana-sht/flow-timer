@@ -3,6 +3,7 @@ import './App.css';
 import Sidebar from './Sidebar';
 import TimerDisplay from './TimerDisplay';
 import { generateId } from './utils';
+import { useTheme } from './useTheme';
 
 const DEFAULT_CONFIG = {
   segments: [
@@ -67,6 +68,7 @@ export default function App() {
   const [config, setConfig] = useState(DEFAULT_CONFIG);
   const [toasts, setToasts] = useState([]);
   const [activeSegmentId, setActiveSegmentId] = useState(null);
+  const [theme, toggleTheme] = useTheme();
 
   const showToast = useCallback((toast) => {
     const id = Math.random().toString(36).slice(2);
@@ -89,7 +91,27 @@ export default function App() {
           <div className="logo-icon">⏱</div>
           <span className="logo-text">FlowTimer</span>
         </div>
-        <span className="header-badge">Multi-Segment Timer</span>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span className="header-badge">Multi-Segment Timer</span>
+
+          {/* Theme toggle */}
+          <button
+            className="theme-toggle"
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            aria-label="Toggle theme"
+          >
+            <span className="theme-toggle-track">
+              <span className="theme-toggle-thumb">
+                {theme === 'dark' ? '🌙' : '☀️'}
+              </span>
+            </span>
+            <span className="theme-toggle-label">
+              {theme === 'dark' ? 'Dark' : 'Light'}
+            </span>
+          </button>
+        </div>
       </header>
 
       {/* Main */}
