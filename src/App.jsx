@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import './App.css';
 import Sidebar from './Sidebar';
 import TimerDisplay from './TimerDisplay';
@@ -64,11 +64,32 @@ function Toast({ toasts }) {
   );
 }
 
+const STORAGE_KEY = 'flowtimer-config';
+
+function loadConfig() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return { ...DEFAULT_CONFIG, ...JSON.parse(saved) };
+  } catch {
+    // ignore corrupt data
+  }
+  return DEFAULT_CONFIG;
+}
+
 export default function App() {
-  const [config, setConfig] = useState(DEFAULT_CONFIG);
+  const [config, setConfig] = useState(loadConfig);
   const [toasts, setToasts] = useState([]);
   const [activeSegmentId, setActiveSegmentId] = useState(null);
   const [theme, toggleTheme] = useTheme();
+
+  // Persist config to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+    } catch {
+      // ignore storage errors (e.g. private browsing quota)
+    }
+  }, [config]);
 
   const showToast = useCallback((toast) => {
     const id = Math.random().toString(36).slice(2);
