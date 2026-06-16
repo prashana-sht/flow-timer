@@ -5,35 +5,43 @@ import TimerDisplay from './TimerDisplay';
 import { generateId } from './utils';
 import { useTheme } from './useTheme';
 
+// Generate 10 identical work segments
+const WORK_SEGMENT = () => ({
+  id: generateId(),
+  name: 'Work',
+  type: 'work',
+  durationMinutes: 0,
+  durationSeconds: 11,
+  duration: 11,
+  sound: 'beep',
+  frequency: 880,
+  volume: 70,
+  soundRepeats: 1,
+});
+
+const BREAK_SEGMENT_DEF = {
+  id: generateId(),
+  name: 'Break',
+  type: 'break',
+  durationMinutes: 0,
+  durationSeconds: 10,
+  duration: 10,
+  sound: 'beep',
+  frequency: 660,
+  volume: 60,
+  soundRepeats: 1,
+};
+
 const DEFAULT_CONFIG = {
+  // 10 work segments + 1 break = one "round"
+  // cycles=10 repeats the whole round 10 times
   segments: [
-    {
-      id: generateId(),
-      name: 'Focus',
-      type: 'work',
-      durationMinutes: 0,
-      durationSeconds: 20,
-      duration: 20,
-      sound: 'beep',
-      frequency: 880,
-      volume: 70,
-      soundRepeats: 1,
-    },
-    {
-      id: generateId(),
-      name: 'Short Break',
-      type: 'break',
-      durationMinutes: 0,
-      durationSeconds: 20,
-      duration: 20,
-      sound: 'chime',
-      frequency: 660,
-      volume: 60,
-      soundRepeats: 1,
-    },
+    ...Array.from({ length: 10 }, WORK_SEGMENT),
+    BREAK_SEGMENT_DEF,
   ],
-  cycles: 5,
-  breakAfterCycles: 5,
+  cycles: 10,
+  // breakAfterCycles disabled (set above cycles count)
+  breakAfterCycles: 99,
   breakSegment: {
     id: generateId(),
     name: 'Long Break',
@@ -64,7 +72,7 @@ function Toast({ toasts }) {
   );
 }
 
-const STORAGE_KEY = 'flowtimer-config';
+const STORAGE_KEY = 'flowtimer-config-v3';
 
 function loadConfig() {
   try {
