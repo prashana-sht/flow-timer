@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { createBeepSound, generateId } from './utils';
+import { createBeepSound, generateId, resumeAudioContext } from './utils';
 
 export default function SegmentEditor({ segment, onSave, onCancel, isNew }) {
   const [form, setForm] = useState({ ...segment });
@@ -7,6 +7,7 @@ export default function SegmentEditor({ segment, onSave, onCancel, isNew }) {
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
   const previewSound = useCallback(() => {
+    resumeAudioContext();
     createBeepSound(form.sound, form.volume / 100, form.frequency || 880, 0.5);
   }, [form.sound, form.volume, form.frequency]);
 

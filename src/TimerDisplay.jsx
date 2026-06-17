@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { createBeepSound, buildTimerSequence, formatTime, SEGMENT_TYPES } from './utils';
+import { createBeepSound, buildTimerSequence, formatTime, SEGMENT_TYPES, resumeAudioContext } from './utils';
 
 const CIRCLE_RADIUS = 130;
 const CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
@@ -131,6 +131,7 @@ export default function TimerDisplay({ config, onToast }) {
 
   /* ── Controls ─────────────────────────────────────────────────────── */
   const startTimer = useCallback(() => {
+    resumeAudioContext();
     setCompleted(false);
     setRunning(true);
     clearInterval(intervalRef.current);
@@ -141,16 +142,21 @@ export default function TimerDisplay({ config, onToast }) {
   }, [tick, config.notify]);
 
   const pauseTimer = useCallback(() => {
+    resumeAudioContext();
     clearInterval(intervalRef.current);
     setRunning(false);
   }, []);
 
   const skipSegment = useCallback(() => {
+    resumeAudioContext();
     playEndSound(seqRef.current[seqIndexRef.current]);
     advance();
   }, [advance, playEndSound]);
 
-  const reset = useCallback(() => doReset(), [doReset]);
+  const reset = useCallback(() => {
+    resumeAudioContext();
+    doReset();
+  }, [doReset]);
 
   /* ── Derived display values ───────────────────────────────────────── */
   const currentSeg   = sequence[seqIndex];
